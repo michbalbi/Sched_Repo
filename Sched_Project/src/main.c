@@ -30,6 +30,7 @@
 #include "MPC5606B_ClkInit.h"
 #include "MPC5606B_INTERRUPTS_lib.h"
 #include "MPC5606B_PIT_lib.h"
+#include "Sch.h"
 
 /* Functions macros, constants, types and datas         */
 /* ---------------------------------------------------- */
@@ -126,8 +127,6 @@ int main(void) {
 	
 	/* Interrupts init, SW Mode */
     INT_SW_VECTOR_MODE();
-    
-    TimersInit();
     
     TIMER_LOAD_VALUE_US(781,0);
     INTC_InstallINTCInterruptHandler(Sch_OSTick, PIT0_Vector, PRIORITY13);

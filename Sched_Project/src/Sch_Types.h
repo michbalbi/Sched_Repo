@@ -64,7 +64,7 @@ typedef enum{
 }E_SCH_TASK_STATE;
 
 typedef struct {
-	T_SCH_TASK_STATE SchTaskState;
+	E_SCH_TASK_STATE SchTaskState;
 	T_TASK_FUNCTION_PTR TaskFunctionControlPtr;
 }S_SCH_TASK_CONTROL; /* TaskControl -> TCB (TaskControlBlock)*/
 
@@ -77,7 +77,7 @@ typedef struct {
 
 typedef struct {
 	T_UBYTE SchNumberOfTasks;
-	const S_TASK_DESCRIPTOR *SchTaskTable;
+	const S_TASK_DESCRIPTOR *SchTaskDescriptor;
 }S_SCH_CONFIG;
 
 typedef enum{

@@ -69,8 +69,12 @@
 /* ---------------------------------------- */
 
 /* Functions prototypes */
-
-
+ /*void Sch_Init(S_TASK_DESCRIPTOR *S_SCH_CONFIG);*/
+ void Sch_DeInit(void);
+ void Sch_OSTick(void);
+ void Sch_Start(void);
+ void Sch_Background(void);
+ 
 /* Functions macros */
 
 

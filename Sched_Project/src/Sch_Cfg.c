@@ -25,6 +25,7 @@
 /* Includes */
 /* -------- */
 #include "Sch_Cfg.h"
+#include "Sch_Types.h"
 
 /* Functions macros, constants, types and datas         */
 /* ---------------------------------------------------- */
@@ -48,7 +49,7 @@ const S_TASK_DESCRIPTOR SchTaskDescriptorConfig[] = {
 	{3, MASK_25MS, 		TASK_25MS, 		(void*)0    },
 	{5, MASK_50MS, 		TASK_50MS, 		(void*)0    },
 	{6, MASK_100MS, 	TASK_100MS, 	(void*)0    },
-}
+};
 
 const S_SCH_CONFIG SchConfig = {
 	(sizeof(SchTaskDescriptorConfig)/sizeof(SchTaskDescriptorConfig[0])),

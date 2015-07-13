@@ -104,9 +104,9 @@
  *  Return               :	void
  *  Critical/explanation :  
  **************************************************************/
- void Sch_Init(Sch_TaskConfigType *Sch_Config){
+ /*void Sch_Init(S_TASK_DESCRIPTOR *S_SCH_CONFIG){
  	
- }
+ }*/
  
  /**************************************************************
  *  Name                 :	Sch_DeInit
