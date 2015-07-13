@@ -24,7 +24,10 @@
 
 /* Includes */
 /* -------- */
+#include "conti_typedefs.h"
+#include "Sch_Types.h"
 #include "Sch.h"
+
 
 /* Functions macros, constants, types and datas         */
 /* ---------------------------------------------------- */
@@ -95,10 +98,57 @@
 /* Exported functions */
 /* ------------------ */
 /**************************************************************
- *  Name                 :	export_func
+ *  Name                 :	Sch_Init
  *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :  
  **************************************************************/
+ void Sch_Init(Sch_TaskConfigType *Sch_Config){
+ 	
+ }
+ 
+ /**************************************************************
+ *  Name                 :	Sch_DeInit
+ *  Description          :
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :  
+ **************************************************************/
+ void Sch_DeInit(void){
+ 	
+ }
+
+/**************************************************************
+ *  Name                 :	Sch_OSTick
+ *  Description          :
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :  
+ **************************************************************/
+ void Sch_OSTick(void){
+ 	
+ }
+ 
+ /**************************************************************
+ *  Name                 :	Sch_Start
+ *  Description          :
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :  
+ **************************************************************/
+ void Sch_Start(void){
+ 	
+ }
+ 
+  /**************************************************************
+ *  Name                 :	Sch_Background
+ *  Description          :
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :  
+ **************************************************************/
+ void Sch_Background(void){
+ 	
+ }
 

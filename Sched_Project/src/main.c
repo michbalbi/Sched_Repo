@@ -129,7 +129,8 @@ int main(void) {
     
     TimersInit();
     
-    INTC_InstallINTCInterruptHandler(Timer10ms_INT_handler, PIT0_Vector, PRIORITY13);
+    TIMER_LOAD_VALUE_US(781,0);
+    INTC_InstallINTCInterruptHandler(Sch_OSTick, PIT0_Vector, PRIORITY13);
     
     INT_LOWER_CPR(PRIORITY0);
     INTC_InitINTCInterrupts();  
