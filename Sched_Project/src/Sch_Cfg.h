@@ -27,7 +27,7 @@
 
 /* Includes */
 /* -------- */
-
+#include "Sch.h"
 
 /* Exported types and constants */
 /* ---------------------------- */
@@ -47,7 +47,7 @@
 
 /* LONG and STRUCTURE constants */
 
-
+extern const S_SCH_CONFIG cs_SchConfig;
 
 /*======================================================*/ 
 /* Definition of RAM variables                          */

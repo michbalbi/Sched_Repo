@@ -44,7 +44,7 @@ typedef enum{
 	MASK_12P5MS = 15,
 	MASK_25MS = 31,
 	MASK_50MS = 63,
-	MASK_100MS = 127,
+	MASK_100MS = 127
 }E_SCH_TASK_MASK;
 
 typedef enum{

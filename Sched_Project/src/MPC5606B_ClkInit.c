@@ -122,7 +122,7 @@ void initModesAndClock(void) {
   
   ME.PCTL[PCTL_SIUL].R = 0x01; 	  /* MPC56xxB/S SIU: select ME.RUNPC[1] */	  
   ME.PCTL[PCTL_PIT].R = 0x01;
-  ME.PCTL[PCTL_EMIOS_0].R = 0x01;
+  /*ME.PCTL[PCTL_EMIOS_0].R = 0x01;*/
                                   
   /* Mode Transition to enter RUN0 mode: */
   ME.MCTL.R = 0x40005AF0;         /* Enter RUN0 Mode & Key */

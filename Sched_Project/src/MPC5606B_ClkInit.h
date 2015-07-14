@@ -83,7 +83,6 @@ extern void disableWatchdog(void);
 
 
 /* Exported defines */
-#define CLK_FREQ 64000000U
 
 /* Register gating addresses offsets for PCTL registers */
 

@@ -102,3 +102,26 @@
  *  Critical/explanation :    [yes / No]
  **************************************************************/
 
+void Sch_Task_3P125MS(void){
+	
+}
+
+void Sch_Task_6P25MS(void){
+	
+}
+
+void Sch_Task_12P5MS(void){
+	
+}
+
+void Sch_Task_25MS(void){
+	
+}
+
+void Sch_Task_50MS(void){
+	
+}
+
+void Sch_Task_100MS(void){
+	
+}

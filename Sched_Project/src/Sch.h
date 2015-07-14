@@ -27,7 +27,8 @@
 
 /* Includes */
 /* -------- */
-
+#include "Sch_Types.h"
+#include "Sch_Cfg.h"
 
 /* Exported types and constants */
 /* ---------------------------- */
@@ -69,11 +70,11 @@
 /* ---------------------------------------- */
 
 /* Functions prototypes */
- /*void Sch_Init(S_TASK_DESCRIPTOR *S_SCH_CONFIG);*/
- void Sch_DeInit(void);
- void Sch_OSTick(void);
- void Sch_Start(void);
- void Sch_Background(void);
+ extern void Sch_Init(S_SCH_CONFIG *lps_SchConfig);
+ extern void Sch_Stop(void);
+ extern void Sch_OSTick(void);
+ extern void Sch_Start(void);
+ extern void Sch_Background(void);
  
 /* Functions macros */
 

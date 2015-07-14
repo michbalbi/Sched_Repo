@@ -128,11 +128,15 @@ int main(void) {
 	/* Interrupts init, SW Mode */
     INT_SW_VECTOR_MODE();
     
-    TIMER_LOAD_VALUE_US(781,0);
+    /*TIMER_LOAD_VALUE_US(781,0);*/
+    TIMER_LOAD_VALUE_CYCLES(49999U,0); /*781.25 us to cycles*/
     INTC_InstallINTCInterruptHandler(Sch_OSTick, PIT0_Vector, PRIORITY13);
     
     INT_LOWER_CPR(PRIORITY0);
     INTC_InitINTCInterrupts();  
+    
+    Sch_Init((S_SCH_CONFIG*)&cs_SchConfig);
+    Sch_Start();
 	
 	
 	for (;;) {
