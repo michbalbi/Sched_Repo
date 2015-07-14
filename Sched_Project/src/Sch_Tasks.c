@@ -24,7 +24,9 @@
 
 /* Includes */
 /* -------- */
+#include "conti_typedefs.h"
 #include "Sch_Tasks.h"
+#include "MPC5606B_GPIO_lib.h"
 
 /* Functions macros, constants, types and datas         */
 /* ---------------------------------------------------- */
@@ -47,7 +49,10 @@
 /* Definition of RAM variables                          */
 /*======================================================*/ 
 /* BYTE RAM variables */
-
+T_UBYTE counter100ms = 0;
+T_UBYTE counter50ms = 0;
+T_UBYTE counter25ms = 0;
+T_UBYTE counter3p125ms = 0;
 
 /* WORD RAM variables */
 
@@ -103,7 +108,12 @@
  **************************************************************/
 
 void Sch_Task_3P125MS(void){
+	counter3p125ms++;
 	
+	if(counter3p125ms==10){
+		LED_TOGGLE(LED4);
+		counter3p125ms=0;
+	}
 }
 
 void Sch_Task_6P25MS(void){
@@ -112,16 +122,34 @@ void Sch_Task_6P25MS(void){
 
 void Sch_Task_12P5MS(void){
 	
+	
 }
 
 void Sch_Task_25MS(void){
+	counter25ms++;
+	
+	if(counter25ms==10){
+		LED_TOGGLE(LED3);
+		counter25ms=0;
+	}
 	
 }
 
 void Sch_Task_50MS(void){
+	counter50ms++;
+	
+	if(counter50ms==10){
+		LED_TOGGLE(LED2);
+		counter50ms=0;
+	}
 	
 }
 
 void Sch_Task_100MS(void){
+	counter100ms++;
 	
+	if(counter100ms==10){
+		LED_TOGGLE(LED1);
+		counter100ms=0;
+	}
 }

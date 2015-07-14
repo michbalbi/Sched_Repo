@@ -25,6 +25,7 @@
 /* Includes */
 /* -------- */
 #include "conti_typedefs.h"
+#include "MPC5606B_INTERRUPTS_lib.h"
 #include "MPC5606B_PIT_lib.h"
 #include "Sch_Types.h"
 #include "Sch.h"
@@ -57,6 +58,9 @@
 
 
 /* LONG and STRUCTURE RAM variables */
+S_SCH_CONFIG *rps_SchConfig_ptr;
+
+/*S_SCH_TASK_CONTROL ras_SchTaskControlBlock[];*/
 
 S_SCH_TASK_CONTROL ras_SchTaskControlBlock[] = {
 	{TASK_STATE_SUSPENDED, (void*)0 },
@@ -120,19 +124,37 @@ S_SCH_CONTROL rs_SchControl = {
  *  Return               :	void
  *  Critical/explanation :  
  **************************************************************/
- void Sch_Init(S_SCH_CONFIG *ls_SchConfig){
+ void Sch_Init(S_SCH_CONFIG *lps_SchConfig){
  	T_UBYTE lub_i, lub_NumberOfTasks;
- 	lub_NumberOfTasks = ls_SchConfig->SchNumberOfTasks;
+ 	S_TASK_DESCRIPTOR * lp_TaskDescriptorPtr; 
+ 	rps_SchConfig_ptr = lps_SchConfig;
+ 	
+ 	lp_TaskDescriptorPtr = (S_TASK_DESCRIPTOR *)(lps_SchConfig->SchTaskDescriptor);
+ 	lub_NumberOfTasks = lps_SchConfig->SchNumberOfTasks;
+ 	
+ 	/*static S_SCH_TASK_CONTROL ras_SchTaskControlBlock[];*/
  	
  	for(lub_i=0; lub_i<lub_NumberOfTasks; lub_i++){
  		/*lps_SchConfig->SchTaskDescriptor.*/
  		
  		/* Set all tasks to SUSPENDED */
  		ras_SchTaskControlBlock[lub_i].SchTaskState = TASK_STATE_SUSPENDED;
+ 		/*ras_SchTaskControlBlock[lub_i].TaskFunctionControlPtr = lps_SchConfig->SchTaskDescriptor[lub_i].TaskFunctionPtr;*/
+ 		ras_SchTaskControlBlock[lub_i].TaskFunctionControlPtr = lp_TaskDescriptorPtr->TaskFunctionPtr;
+ 		lp_TaskDescriptorPtr++;
  	}
- 	
+  	
+  	 /*TIMER_LOAD_VALUE_US(781,0);*/
+    TIMER_LOAD_VALUE_CYCLES(49999U,0); /*781.25 us to cycles*/
+    TIMER_ENABLE_INT(0);
+    INTC_InstallINTCInterruptHandler(Sch_OSTick, PIT0_Vector, PRIORITY13);
+    
+    INT_LOWER_CPR(PRIORITY0);
+    TIMER_INIT();
+    INTC_InitINTCInterrupts(); 
+  	
  	rs_SchControl.SchCounter = 0;
- 	rs_SchControl.SchTaskRunning = TASK_BKG;
+ 	/*rs_SchControl.SchTaskRunning = TASK_BKG;*/
  	rs_SchControl.SchStatus = SCH_INIT;
  }
  
@@ -171,11 +193,26 @@ S_SCH_CONTROL rs_SchControl = {
  *  Critical/explanation :  
  **************************************************************/
  void Sch_OSTick(void){
+ 	T_UBYTE lub_i, lub_NumberOfTasks;
+ 	S_TASK_DESCRIPTOR * lp_TaskDescriptorPtr; 
+ 	
+ 	lp_TaskDescriptorPtr = (S_TASK_DESCRIPTOR *)(rps_SchConfig_ptr->SchTaskDescriptor);
+ 
  	rs_SchControl.SchCounter++;
- 	
+ 	lub_NumberOfTasks = rps_SchConfig_ptr->SchNumberOfTasks;
  	/* Compare counter with each task mask and offset. Mark
- 	   task as ready accordingly */
- 	
+ 	   task as READY accordingly */
+ 	   
+   	for(lub_i=0; lub_i<lub_NumberOfTasks; lub_i++){
+   		
+   		if(((lp_TaskDescriptorPtr->SchTaskMask)&(rs_SchControl.SchCounter))==(lp_TaskDescriptorPtr->SchTaskOffset)){
+   			ras_SchTaskControlBlock[lub_i].SchTaskState = TASK_STATE_READY;
+   		}
+   		
+   		lp_TaskDescriptorPtr++;
+   		
+   	}
+ 	TIMER_CLEAR_INT_FLAG(0);
  }
  
   /**************************************************************
@@ -190,12 +227,22 @@ S_SCH_CONTROL rs_SchControl = {
  	   and execute it via their function ptr and mark it as RUNNING.
  	   Also update the SchControl.SchTaskRunning field*/
  	   	T_UBYTE lub_i, lub_NumberOfTasks;
- 		lub_NumberOfTasks = ls_SchConfig->SchNumberOfTasks;
+ 		lub_NumberOfTasks = rps_SchConfig_ptr->SchNumberOfTasks;
+ 		
+ 		/*lub_NumberOfTasks = (sizeof(cas_SchTaskDescriptorConfig)/sizeof(cas_SchTaskDescriptorConfig[0]))*/
  	
  	   for(;;){
  	   
  	   		for(lub_i=0; lub_i<lub_NumberOfTasks; lub_i++){	
- 			
+ 				
+ 				if(ras_SchTaskControlBlock[lub_i].SchTaskState == TASK_STATE_READY){
+ 					rs_SchControl.SchStatus = SCH_RUNNING;
+ 					ras_SchTaskControlBlock[lub_i].SchTaskState = TASK_STATE_RUNNING;
+ 					(ras_SchTaskControlBlock[lub_i].TaskFunctionControlPtr)();
+ 					ras_SchTaskControlBlock[lub_i].SchTaskState = TASK_STATE_SUSPENDED;
+ 					/* Set the scheduler state to idle. */
+ 				}
+ 				
  			}
  	   		
  	   			
