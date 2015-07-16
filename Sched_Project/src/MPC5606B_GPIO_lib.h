@@ -171,7 +171,7 @@
 #define PUSH3 66
 #define PUSH4 67
 
-#define LED1 68
+#define LED1 68 /* PE4 */
 #define LED2 69
 #define LED3 70
 #define LED4 71

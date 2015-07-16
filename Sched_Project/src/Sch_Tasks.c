@@ -49,10 +49,9 @@
 /* Definition of RAM variables                          */
 /*======================================================*/ 
 /* BYTE RAM variables */
-T_UBYTE counter100ms = 0;
-T_UBYTE counter50ms = 0;
-T_UBYTE counter25ms = 0;
-T_UBYTE counter3p125ms = 0;
+
+
+
 
 /* WORD RAM variables */
 
@@ -77,24 +76,10 @@ T_UBYTE counter3p125ms = 0;
 
 /* Inline functions */
 /* ---------------- */
-/**************************************************************
- *  Name                 : inline_func	2
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
 
 
 /* Private functions */
 /* ----------------- */
-/**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
 
 
 /* Exported functions */
@@ -108,82 +93,29 @@ T_UBYTE counter3p125ms = 0;
  **************************************************************/
 
 void Sch_Task_3P125MS(void){
-
-	/*T_UWORD i;
-	
-	OUTPUT_HIGH(PC2);
-	
-	for(i=0;i<1000;i++){
-		
-	}	
-	
-	OUTPUT_LOW(PC2);
-	counter3p125ms++;
-	
-	if(counter3p125ms==160){
-		LED_TOGGLE(LED4);
-		counter3p125ms=0;
-	}*/
+	LED_TOGGLE(LED1);
 }
 
 void Sch_Task_6P25MS(void){
-	T_UWORD i;
-	
-	OUTPUT_HIGH(PC3);
-	
-	for(i=0;i<1000;i++){
-		
-	}	
-	
-	OUTPUT_LOW(PC3);
+
+	LED_TOGGLE(LED2);
 }
 
 void Sch_Task_12P5MS(void){
-	T_UWORD i;
-	
-	OUTPUT_HIGH(PC4);
-	
-	for(i=0;i<1000;i++){
-		
-	}	
-	
-	OUTPUT_LOW(PC4);
+
+	LED_TOGGLE(LED3);
 	
 }
 
 void Sch_Task_25MS(void){
-	T_UWORD i;
-	
-	OUTPUT_HIGH(PC5);
-	
-	for(i=0;i<1000;i++){
-		
-	}	
-	
-	OUTPUT_LOW(PC5);
+	LED_TOGGLE(LED4);
 }
 
 void Sch_Task_50MS(void){
-	T_UWORD i;
-	
-	OUTPUT_HIGH(PC6);
-	
-	for(i=0;i<1000;i++){
-		
-	}	
-	
-	OUTPUT_LOW(PC6);
+
 	
 }
 
 void Sch_Task_100MS(void){
-	T_UWORD i;
-	
-	OUTPUT_HIGH(PC2);
-	
-	for(i=0;i<1000;i++){
-		
-	}	
-	
-	OUTPUT_LOW(PC2);
+
 }

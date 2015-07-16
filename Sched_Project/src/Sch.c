@@ -5,7 +5,7 @@
 /*============================================================================*
 * C Source:         %Sch.c%
 * Instance:         1
-* %version:         1 %
+* %version:         1.1 %
 * %created_by:      Michele Balbi %
 * %date_created:    July 13 2015 %
 *=============================================================================*/
@@ -20,6 +20,9 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 13/07/2015  |                               | Michele Balbi    */
 /* 	First draft.                                                              */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 16/07/2015  |                               | Michele Balbi    */
+/* 	Function documentation.                                                   */
 /*============================================================================*/
 
 /* Includes */
@@ -96,35 +99,59 @@ S_SCH_CONTROL rs_SchControl = {
 
 /* Inline functions */
 /* ---------------- */
-/**************************************************************
- *  Name                 : inline_func	2
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
 
 
 /* Private functions */
 /* ----------------- */
-/**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
 
+/********************************************************************************
+ *  Name                 :	Sch_Background
+ *  Description          :	The Scheduler's task executed repeatedly to call the
+ 							appropriate task when marked as READY.
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :  Iterate all tasks and see which one is marked as READY
+ 	   						and execute it via their function ptr and mark it as RUNNING.
+ 	   						Also update the SchControl.SchTaskRunning field.
+ 	   						After the execution of the task, its state is changed
+ 	   						to SUSPENDED.
+ ********************************************************************************/
+ void Sch_Background(void){
+ 
+ 	   	T_UBYTE lub_i, lub_NumberOfTasks;
+ 		lub_NumberOfTasks = rps_SchConfig_ptr->SchNumberOfTasks;
+ 	
+ 	   for(;;){
+ 	   
+ 	   		for(lub_i=0; lub_i<lub_NumberOfTasks; lub_i++){	
+ 				
+ 				if(ras_SchTaskControlBlock_ptr[lub_i].SchTaskState == TASK_STATE_READY){
+ 					rs_SchControl.SchStatus = SCH_RUNNING;
+ 					rs_SchControl.SchTaskRunning = rps_SchConfig_ptr->SchTaskDescriptor->SchTaskId;
+ 					ras_SchTaskControlBlock_ptr[lub_i].SchTaskState = TASK_STATE_RUNNING;
+ 					(ras_SchTaskControlBlock_ptr[lub_i].TaskFunctionControlPtr)();
+ 					ras_SchTaskControlBlock_ptr[lub_i].SchTaskState = TASK_STATE_SUSPENDED;	
+ 				}	
+ 			}
+ 	   		rs_SchControl.SchTaskRunning = TASK_BKG;
+ 			rs_SchControl.SchStatus = SCH_IDLE;	
+ 	   }
+ }
 
 /* Exported functions */
 /* ------------------ */
-/**************************************************************
+/********************************************************************************
  *  Name                 :	Sch_Init
- *  Description          :
+ *  Description          :	Scheduler's initialization function.
  *  Parameters           :  void
  *  Return               :	void
- *  Critical/explanation :  
- **************************************************************/
+ *  Critical/explanation :  This routine prepares the scheduler to run. 
+ 							Initializes the Task Control Block according to the
+ 							number of configured tasks, suding a memory allocation algorithm,
+ 							marking all tasks as SUSPENDED.
+ 							Configures the timer used as the system's tick.
+ 							Sets the scheduler's counter to 0 and its status to INITIALIZED.
+ ********************************************************************************/
  void Sch_Init(const S_SCH_CONFIG *lps_SchConfig){
  	T_UBYTE lub_i, lub_NumberOfTasks;
  	S_TASK_DESCRIPTOR * lp_TaskDescriptorPtr; 
@@ -143,54 +170,55 @@ S_SCH_CONTROL rs_SchControl = {
  		lp_TaskDescriptorPtr++;
  	}
   	
-  	 /*TIMER_LOAD_VALUE_US(781,0);*/
-    TIMER_LOAD_VALUE_CYCLES(50000U,0); /*781.25 us to cycles*/
+    TIMER_LOAD_VALUE_CYCLES(49999U,0); /*781.25 us to cycles*/
     TIMER_ENABLE_INT(0);
-    INTC_InstallINTCInterruptHandler(Sch_OSTick, PIT0_Vector, PRIORITY13);
-    
-    INT_LOWER_CPR(PRIORITY0);
     TIMER_INIT();
-    INTC_InitINTCInterrupts(); 
   	
  	rs_SchControl.SchCounter = 0;
- 	/*rs_SchControl.SchTaskRunning = TASK_BKG;*/
  	rs_SchControl.SchStatus = SCH_INIT;
  }
  
- /**************************************************************
+ /******************************************************************************
  *  Name                 :	Sch_Start
- *  Description          :
+ *  Description          :	Scheduler's Start routine.
  *  Parameters           :  void
  *  Return               :	void
- *  Critical/explanation :  
- **************************************************************/
+ *  Critical/explanation :  This routine starts the execution of the scheduler.
+ 							Sets its status to RUNNING.
+ 							Starts the timer used as the tick.
+ 							Calls the scheduler's background task.
+ ******************************************************************************/
  void Sch_Start(void){
- 	/* Set scheduler status to RUNNING */
  	rs_SchControl.SchStatus = SCH_RUNNING;
  	TIMER_START(0);
- 	
  	Sch_Background();
  }
  
- /**************************************************************
- *  Name                 :	Sch_DeInit
- *  Description          :
+ /******************************************************************************
+ *  Name                 :	Sch_Stop
+ *  Description          :	Scheduler's Stop routine.
  *  Parameters           :  void
  *  Return               :	void
- *  Critical/explanation :  
- **************************************************************/
+ *  Critical/explanation :  This routine stops the execution of the scheduler.
+ 							Sets its status to HALTED.
+ 							Stops the timer used as the tick.
+ ******************************************************************************/
  void Sch_Stop(void){
  	TIMER_STOP(0);
  	rs_SchControl.SchStatus = SCH_HALTED;
  }
 
-/**************************************************************
+/******************************************************************************
  *  Name                 :	Sch_OSTick
- *  Description          :
+ *  Description          :	Scheduler's Stop routine.
  *  Parameters           :  void
  *  Return               :	void
- *  Critical/explanation :  
- **************************************************************/
+ *  Critical/explanation :  This is the callback routine for the timer.
+ 							In this function the scheduelr's counter is increased
+ 							and compared against eachs task's configured mask and
+ 							offset to determine if it shall be executed. If so,
+ 							the task is marked as READY
+ ******************************************************************************/
  void Sch_OSTick(void){
  	T_UBYTE lub_i, lub_NumberOfTasks;
  	S_TASK_DESCRIPTOR * lp_TaskDescriptorPtr; 
@@ -200,9 +228,9 @@ S_SCH_CONTROL rs_SchControl = {
  
  	rs_SchControl.SchCounter++;
  	lub_NumberOfTasks = rps_SchConfig_ptr->SchNumberOfTasks;
+ 	
  	/* Compare counter with each task mask and offset. Mark
- 	   task as READY accordingly */
- 	   
+ 	   task as READY accordingly */   
    	for(lub_i=0; lub_i<lub_NumberOfTasks; lub_i++){
    		
    		if(((lp_TaskDescriptorPtr->SchTaskMask)&(rs_SchControl.SchCounter))==(lp_TaskDescriptorPtr->SchTaskOffset)){
@@ -214,38 +242,3 @@ S_SCH_CONTROL rs_SchControl = {
    	}
  	
  }
- 
-  /**************************************************************
- *  Name                 :	Sch_Background
- *  Description          :
- *  Parameters           :  void
- *  Return               :	void
- *  Critical/explanation :  
- **************************************************************/
- void Sch_Background(void){
- 	/* iterate all tasks and see which one is marked as READY
- 	   and execute it via their function ptr and mark it as RUNNING.
- 	   Also update the SchControl.SchTaskRunning field*/
- 	   	T_UBYTE lub_i, lub_NumberOfTasks;
- 		lub_NumberOfTasks = rps_SchConfig_ptr->SchNumberOfTasks;
- 	
- 	   for(;;){
- 	   
- 	   		for(lub_i=0; lub_i<lub_NumberOfTasks; lub_i++){	
- 				
- 				if(ras_SchTaskControlBlock_ptr[lub_i].SchTaskState == TASK_STATE_READY){
- 					rs_SchControl.SchStatus = SCH_RUNNING;
- 					rs_SchControl.SchTaskRunning = rps_SchConfig_ptr->SchTaskDescriptor->SchTaskId;
- 					ras_SchTaskControlBlock_ptr[lub_i].SchTaskState = TASK_STATE_RUNNING;
- 					(ras_SchTaskControlBlock_ptr[lub_i].TaskFunctionControlPtr)();
- 					ras_SchTaskControlBlock_ptr[lub_i].SchTaskState = TASK_STATE_SUSPENDED;
- 					rs_SchControl.SchTaskRunning = TASK_BKG;
- 					rs_SchControl.SchStatus = SCH_IDLE;
- 				}
- 				
- 			}
- 	   		
- 	   			
- 	   }
- }
-

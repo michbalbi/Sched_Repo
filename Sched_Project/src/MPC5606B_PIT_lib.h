@@ -26,10 +26,8 @@
 #define _MPC5606B_PIT_LIB_
 
 #include "MPC5606B.h"
-/*#include "MPC5606B_ClkInit.h"*/
 
 #define CLK_FREQ 	64000000U
-/*#define CLK_PERIOD	((T_ULONG)(1/CLK_FREQ)*/
 
 /* Timer Macros */
 
@@ -46,8 +44,6 @@
 #define TIMER_STOP(timer)					(PIT.CH[timer].TCTRL.B.TEN = 0)
 #define TIMER_IS_RUNNING(timer)				(PIT.CH[timer].TCTRL.B.TEN)
 #define TIMER_CLEAR_INT_FLAG(timer)			(PIT.CH[timer].TFLG.B.TIF = 1)
-
-
 
 
 #endif

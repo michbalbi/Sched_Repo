@@ -94,33 +94,13 @@ const S_SCH_CONFIG cs_SchConfig = {
 
 /* Inline functions */
 /* ---------------- */
-/**************************************************************
- *  Name                 : inline_func	2
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
 
 
 /* Private functions */
 /* ----------------- */
-/**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
 
 
 /* Exported functions */
 /* ------------------ */
-/**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
+
 

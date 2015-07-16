@@ -118,7 +118,7 @@
  *  Parameters           :	void
  *  Return               :	void
  *  Critical/explanation :  The main routine initializes the
- 							peripherals used in this project.
+ 							peripherals used in this system.
  **************************************************************/
 int main(void) {
 	
@@ -128,7 +128,7 @@ int main(void) {
 	
 	MemAllocInit(&MemAllocConfig);
 	
-	GPIO_AS_OUTPUT(PC2);
+	/*GPIO_AS_OUTPUT(PC2);
 	GPIO_AS_OUTPUT(PC3);
 	GPIO_AS_OUTPUT(PC4);
 	GPIO_AS_OUTPUT(PC5);
@@ -140,14 +140,24 @@ int main(void) {
 	OUTPUT_LOW(PC4);
 	OUTPUT_LOW(PC5);
 	OUTPUT_LOW(PC6);
-	OUTPUT_LOW(PC7);
+	OUTPUT_LOW(PC7);*/
+	
+	GPIO_AS_OUTPUT(LED1);
+	GPIO_AS_OUTPUT(LED2);
+	GPIO_AS_OUTPUT(LED3);
+	GPIO_AS_OUTPUT(LED4);
 	
 	/* Interrupts init, SW Mode */
     INT_SW_VECTOR_MODE();
     
     Sch_Init(&cs_SchConfig);
+    
+    INTC_InstallINTCInterruptHandler(Sch_OSTick, PIT0_Vector, PRIORITY13);
+    INT_LOWER_CPR(PRIORITY0);
+    INTC_InitINTCInterrupts(); 
+    
     Sch_Start(); 
 	
-	for (;;) { 	}
+	for (;;) { 	} /* Execution shall never reach this for*/
 }
 
