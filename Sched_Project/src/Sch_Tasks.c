@@ -108,48 +108,82 @@ T_UBYTE counter3p125ms = 0;
  **************************************************************/
 
 void Sch_Task_3P125MS(void){
+
+	/*T_UWORD i;
+	
+	OUTPUT_HIGH(PC2);
+	
+	for(i=0;i<1000;i++){
+		
+	}	
+	
+	OUTPUT_LOW(PC2);
 	counter3p125ms++;
 	
-	if(counter3p125ms==10){
+	if(counter3p125ms==160){
 		LED_TOGGLE(LED4);
 		counter3p125ms=0;
-	}
+	}*/
 }
 
 void Sch_Task_6P25MS(void){
+	T_UWORD i;
 	
+	OUTPUT_HIGH(PC3);
+	
+	for(i=0;i<1000;i++){
+		
+	}	
+	
+	OUTPUT_LOW(PC3);
 }
 
 void Sch_Task_12P5MS(void){
+	T_UWORD i;
 	
+	OUTPUT_HIGH(PC4);
+	
+	for(i=0;i<1000;i++){
+		
+	}	
+	
+	OUTPUT_LOW(PC4);
 	
 }
 
 void Sch_Task_25MS(void){
-	counter25ms++;
+	T_UWORD i;
 	
-	if(counter25ms==10){
-		LED_TOGGLE(LED3);
-		counter25ms=0;
-	}
+	OUTPUT_HIGH(PC5);
 	
+	for(i=0;i<1000;i++){
+		
+	}	
+	
+	OUTPUT_LOW(PC5);
 }
 
 void Sch_Task_50MS(void){
-	counter50ms++;
+	T_UWORD i;
 	
-	if(counter50ms==10){
-		LED_TOGGLE(LED2);
-		counter50ms=0;
-	}
+	OUTPUT_HIGH(PC6);
+	
+	for(i=0;i<1000;i++){
+		
+	}	
+	
+	OUTPUT_LOW(PC6);
 	
 }
 
 void Sch_Task_100MS(void){
-	counter100ms++;
+	T_UWORD i;
 	
-	if(counter100ms==10){
-		LED_TOGGLE(LED1);
-		counter100ms=0;
-	}
+	OUTPUT_HIGH(PC2);
+	
+	for(i=0;i<1000;i++){
+		
+	}	
+	
+	OUTPUT_LOW(PC2);
 }

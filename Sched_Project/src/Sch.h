@@ -70,7 +70,7 @@
 /* ---------------------------------------- */
 
 /* Functions prototypes */
- extern void Sch_Init(S_SCH_CONFIG *lps_SchConfig);
+ extern void Sch_Init(const S_SCH_CONFIG *lps_SchConfig);
  extern void Sch_Stop(void);
  extern void Sch_OSTick(void);
  extern void Sch_Start(void);

@@ -29,6 +29,7 @@
 #include "MPC5606B_PIT_lib.h"
 #include "Sch_Types.h"
 #include "Sch.h"
+#include "MemAlloc.h"
 
 
 /* Functions macros, constants, types and datas         */
@@ -58,18 +59,18 @@
 
 
 /* LONG and STRUCTURE RAM variables */
-S_SCH_CONFIG *rps_SchConfig_ptr;
+const S_SCH_CONFIG *rps_SchConfig_ptr;
 
-/*S_SCH_TASK_CONTROL ras_SchTaskControlBlock[];*/
+S_SCH_TASK_CONTROL *ras_SchTaskControlBlock_ptr;
 
-S_SCH_TASK_CONTROL ras_SchTaskControlBlock[] = {
+/*S_SCH_TASK_CONTROL ras_SchTaskControlBlock[] = {
 	{TASK_STATE_SUSPENDED, (void*)0 },
 	{TASK_STATE_SUSPENDED, (void*)0 },
 	{TASK_STATE_SUSPENDED, (void*)0 },
 	{TASK_STATE_SUSPENDED, (void*)0 },
 	{TASK_STATE_SUSPENDED, (void*)0 },
 	{TASK_STATE_SUSPENDED, (void*)0 },
-};
+};*/
 
 S_SCH_CONTROL rs_SchControl = {
 	0,
@@ -124,7 +125,7 @@ S_SCH_CONTROL rs_SchControl = {
  *  Return               :	void
  *  Critical/explanation :  
  **************************************************************/
- void Sch_Init(S_SCH_CONFIG *lps_SchConfig){
+ void Sch_Init(const S_SCH_CONFIG *lps_SchConfig){
  	T_UBYTE lub_i, lub_NumberOfTasks;
  	S_TASK_DESCRIPTOR * lp_TaskDescriptorPtr; 
  	rps_SchConfig_ptr = lps_SchConfig;
@@ -132,20 +133,18 @@ S_SCH_CONTROL rs_SchControl = {
  	lp_TaskDescriptorPtr = (S_TASK_DESCRIPTOR *)(lps_SchConfig->SchTaskDescriptor);
  	lub_NumberOfTasks = lps_SchConfig->SchNumberOfTasks;
  	
- 	/*static S_SCH_TASK_CONTROL ras_SchTaskControlBlock[];*/
+ 	ras_SchTaskControlBlock_ptr = (S_SCH_TASK_CONTROL*)MemAlloc(sizeof(S_SCH_TASK_CONTROL)*lub_NumberOfTasks);
  	
  	for(lub_i=0; lub_i<lub_NumberOfTasks; lub_i++){
- 		/*lps_SchConfig->SchTaskDescriptor.*/
  		
  		/* Set all tasks to SUSPENDED */
- 		ras_SchTaskControlBlock[lub_i].SchTaskState = TASK_STATE_SUSPENDED;
- 		/*ras_SchTaskControlBlock[lub_i].TaskFunctionControlPtr = lps_SchConfig->SchTaskDescriptor[lub_i].TaskFunctionPtr;*/
- 		ras_SchTaskControlBlock[lub_i].TaskFunctionControlPtr = lp_TaskDescriptorPtr->TaskFunctionPtr;
+ 		ras_SchTaskControlBlock_ptr[lub_i].SchTaskState = TASK_STATE_SUSPENDED;
+ 		ras_SchTaskControlBlock_ptr[lub_i].TaskFunctionControlPtr = lp_TaskDescriptorPtr->TaskFunctionPtr;
  		lp_TaskDescriptorPtr++;
  	}
   	
   	 /*TIMER_LOAD_VALUE_US(781,0);*/
-    TIMER_LOAD_VALUE_CYCLES(49999U,0); /*781.25 us to cycles*/
+    TIMER_LOAD_VALUE_CYCLES(50000U,0); /*781.25 us to cycles*/
     TIMER_ENABLE_INT(0);
     INTC_InstallINTCInterruptHandler(Sch_OSTick, PIT0_Vector, PRIORITY13);
     
@@ -196,6 +195,7 @@ S_SCH_CONTROL rs_SchControl = {
  	T_UBYTE lub_i, lub_NumberOfTasks;
  	S_TASK_DESCRIPTOR * lp_TaskDescriptorPtr; 
  	
+ 	TIMER_CLEAR_INT_FLAG(0);
  	lp_TaskDescriptorPtr = (S_TASK_DESCRIPTOR *)(rps_SchConfig_ptr->SchTaskDescriptor);
  
  	rs_SchControl.SchCounter++;
@@ -206,13 +206,13 @@ S_SCH_CONTROL rs_SchControl = {
    	for(lub_i=0; lub_i<lub_NumberOfTasks; lub_i++){
    		
    		if(((lp_TaskDescriptorPtr->SchTaskMask)&(rs_SchControl.SchCounter))==(lp_TaskDescriptorPtr->SchTaskOffset)){
-   			ras_SchTaskControlBlock[lub_i].SchTaskState = TASK_STATE_READY;
+   			ras_SchTaskControlBlock_ptr[lub_i].SchTaskState = TASK_STATE_READY;
    		}
    		
    		lp_TaskDescriptorPtr++;
    		
    	}
- 	TIMER_CLEAR_INT_FLAG(0);
+ 	
  }
  
   /**************************************************************
@@ -228,19 +228,19 @@ S_SCH_CONTROL rs_SchControl = {
  	   Also update the SchControl.SchTaskRunning field*/
  	   	T_UBYTE lub_i, lub_NumberOfTasks;
  		lub_NumberOfTasks = rps_SchConfig_ptr->SchNumberOfTasks;
- 		
- 		/*lub_NumberOfTasks = (sizeof(cas_SchTaskDescriptorConfig)/sizeof(cas_SchTaskDescriptorConfig[0]))*/
  	
  	   for(;;){
  	   
  	   		for(lub_i=0; lub_i<lub_NumberOfTasks; lub_i++){	
  				
- 				if(ras_SchTaskControlBlock[lub_i].SchTaskState == TASK_STATE_READY){
+ 				if(ras_SchTaskControlBlock_ptr[lub_i].SchTaskState == TASK_STATE_READY){
  					rs_SchControl.SchStatus = SCH_RUNNING;
- 					ras_SchTaskControlBlock[lub_i].SchTaskState = TASK_STATE_RUNNING;
- 					(ras_SchTaskControlBlock[lub_i].TaskFunctionControlPtr)();
- 					ras_SchTaskControlBlock[lub_i].SchTaskState = TASK_STATE_SUSPENDED;
- 					/* Set the scheduler state to idle. */
+ 					rs_SchControl.SchTaskRunning = rps_SchConfig_ptr->SchTaskDescriptor->SchTaskId;
+ 					ras_SchTaskControlBlock_ptr[lub_i].SchTaskState = TASK_STATE_RUNNING;
+ 					(ras_SchTaskControlBlock_ptr[lub_i].TaskFunctionControlPtr)();
+ 					ras_SchTaskControlBlock_ptr[lub_i].SchTaskState = TASK_STATE_SUSPENDED;
+ 					rs_SchControl.SchTaskRunning = TASK_BKG;
+ 					rs_SchControl.SchStatus = SCH_IDLE;
  				}
  				
  			}

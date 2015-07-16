@@ -82,6 +82,7 @@ typedef struct {
 
 typedef enum{
 	SCH_UNINIT,
+	SCH_IDLE,
 	SCH_INIT,
 	SCH_RUNNING,
 	SCH_OVERLOAD,

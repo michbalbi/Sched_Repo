@@ -30,6 +30,7 @@
 #include "MPC5606B_ClkInit.h"
 #include "MPC5606B_INTERRUPTS_lib.h"
 #include "MPC5606B_PIT_lib.h"
+#include "MemAlloc_Cfg.h"
 #include "Sch.h"
 
 /* Functions macros, constants, types and datas         */
@@ -125,15 +126,26 @@ int main(void) {
 	disableWatchdog();      /* Disable watchdog */
 	initPeriClkGen();       /* Initialize peripheral clock generation for DSPIs */
 	
-	GPIO_AS_OUTPUT(LED1);
-	GPIO_AS_OUTPUT(LED2);
-	GPIO_AS_OUTPUT(LED3);
-	GPIO_AS_OUTPUT(LED4);
+	MemAllocInit(&MemAllocConfig);
+	
+	GPIO_AS_OUTPUT(PC2);
+	GPIO_AS_OUTPUT(PC3);
+	GPIO_AS_OUTPUT(PC4);
+	GPIO_AS_OUTPUT(PC5);
+	GPIO_AS_OUTPUT(PC6);
+	GPIO_AS_OUTPUT(PC7);
+	
+	OUTPUT_LOW(PC2);
+	OUTPUT_LOW(PC3);
+	OUTPUT_LOW(PC4);
+	OUTPUT_LOW(PC5);
+	OUTPUT_LOW(PC6);
+	OUTPUT_LOW(PC7);
 	
 	/* Interrupts init, SW Mode */
     INT_SW_VECTOR_MODE();
     
-    Sch_Init((S_SCH_CONFIG*)&cs_SchConfig);
+    Sch_Init(&cs_SchConfig);
     Sch_Start(); 
 	
 	for (;;) { 	}
